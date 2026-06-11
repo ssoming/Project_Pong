@@ -2,7 +2,7 @@
  
 > Basys3 FPGA에서 Verilog RTL로 구현한 Pong 게임. DQN 기반 AI 대전 모드 탑재.
  
-[![Notion](https://img.shields.io/badge/Notion-프로젝트%20상세-000000?style=for-the-badge&logo=notion&logoColor=white)](https://app.notion.com/p/minseokim-profile/FPGA-339b5d65c68c80cb91f2fc9ec11dd616?source=copy_link)
+[![Notion](https://img.shields.io/badge/Notion-프로젝트%20상세%20보기-000000?style=for-the-badge&logo=notion&logoColor=white)](https://app.notion.com/p/minseokim-profile/FPGA-339b5d65c68c80cb91f2fc9ec11dd616?source=copy_link)
  
 ## 개요
  
