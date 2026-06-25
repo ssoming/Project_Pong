@@ -5,7 +5,7 @@
 <!--
 [![Notion](https://img.shields.io/badge/Notion-프로젝트%20상세%20보기-000000?style=for-the-badge&logo=notion&logoColor=white)](https://app.notion.com/p/minseokim-profile/FPGA-339b5d65c68c80cb91f2fc9ec11dd616?source=copy_link)
 -->
-[![YouTube](https://img.shields.io/badge/YouTube-데모%20영상-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/bACKx4IB0f8?si=FJUHvyH4LQi8M5yN)
+[![YouTube](https://img.shields.io/badge/YOUTUBE-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EC%98%81%EC%83%81%20%EB%B3%B4%EA%B8%B0-555555?style=for-the-badge&logo=youtube&logoColor=white&labelColor=FF0000)](https://youtu.be/bACKx4IB0f8?si=FJUHvyH4LQi8M5yN)
 
 ---
 
