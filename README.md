@@ -2,11 +2,14 @@
 
 > Basys3 FPGA에서 Verilog RTL로 구현한, DQN 기반 AI 대전 모드를 탑재한 Pong 게임
 
+<!--
 [![Notion](https://img.shields.io/badge/Notion-프로젝트%20상세%20보기-000000?style=for-the-badge&logo=notion&logoColor=white)](https://app.notion.com/p/minseokim-profile/FPGA-339b5d65c68c80cb91f2fc9ec11dd616?source=copy_link)
+-->
+[![YouTube](https://img.shields.io/badge/YouTube-데모%20영상-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/bACKx4IB0f8?si=FJUHvyH4LQi8M5yN)
 
 ---
 
-## 1. 개요 (Overview)
+## 1. Overview
 
 | 항목 | 내용 |
 |------|------|
@@ -14,55 +17,54 @@
 | 언어 | Verilog HDL |
 | 도구 | Vivado |
 | 해상도 | 800×480 @ 60Hz |
-| 개발 기간 | 2026.03.28-04.01 |
+| 개발 기간 | 2026.03.28 - 04.01 |
 | 팀 구성 | 5인 팀 프로젝트 |
 
 ---
 
-## 2. 담당 역할 (My Role)
+## 2. 주요 기능 (Key Features)
+
+- 1:1 대전 모드 — 두 플레이어가 버튼으로 패들 직접 조작
+- AI 모드 — Colab DQN 학습 가중치를 Verilog 상수로 내장, 조합 논리 기반 신경망 추론으로 P2 자동 제어
+- Predict 모드 — 공의 속도 벡터로 도착 위치를 예측해 P2 패들 자동 이동, 파라미터로 난이도 조절
+- 8구역 반사각 엔진 — 패들 타격 위치(rel_y)에 따라 반사 각도 결정
+- VRAM 없는 실시간 렌더링 — h_cnt/v_cnt 기반 매 픽셀 조합 논리 판단
+- 오리지널 Pong 사운드 재현 — v_cnt 비트 직결 구형파 출력 (아타리 방식)
+
+---
+
+## 3. 담당 역할 (My Role)
 
 - Predict 모드 설계 및 구현 — 공의 속도 벡터 기반 도착 위치 예측, 데드존·반응 주기·오차 파라미터로 난이도 제어
 - pong_top 통합
 
 ---
 
-## 3. 주요 기능 (Key Features)
+## 4. 시스템 아키텍처 및 핵심 구현
 
-- **1:1 / AI / Predict 모드** — 두 플레이어 대전, DQN 자동 제어, 궤적 예측 자동 제어 3가지 모드 전환
-- **AI → RTL 변환** — Colab DQN 가중치를 Verilog 상수로 내장, 클럭 없는 조합 논리로 신경망 추론
-- **실시간 렌더링** — VRAM 없이 h_cnt/v_cnt 기반 매 픽셀 조합 논리로 오브젝트 판단 및 사운드 재현
-
----
-
-## 4. 기술 스택 및 아키텍처 (Tech Stack & Architecture)
-
-![Verilog](https://img.shields.io/badge/Verilog-FF6B35?style=for-the-badge&logo=v&logoColor=white)
-![Vivado](https://img.shields.io/badge/Vivado-E01F27?style=for-the-badge&logo=xilinx&logoColor=white)
-![FPGA](https://img.shields.io/badge/Basys3-0096D6?style=for-the-badge&logo=digilent&logoColor=white)
+### Block Diagram
 
 ![Pong_Flowchart](Pong_Flowchart.png)
 
----
-
-## 5. 핵심 구현 및 트러블슈팅 (Key Implementation & Troubleshooting)
-
 ### 핵심 구현
 
-**① VRAM 없는 실시간 렌더링**
-h_cnt/v_cnt가 모니터 픽셀 위치를 추적하며, 매 픽셀마다 조합 논리로 오브젝트 포함 여부를 즉시 판단해 색상을 출력한다. 별도의 프레임 버퍼 없이 동작한다.
+**① 공 궤적 예측 (Predict 모드)**
+공의 현재 속도 벡터(dx, dy)를 기반으로 패들 라인 도달 위치를 사전 계산해 P2 패들을 이동시킨다. `REACTION_DIV`로 반응 주기, `DEADZONE`으로 정지 허용 범위, `ERROR_RANGE`로 의도적 오차를 주입해 난이도를 파라미터로 제어한다.
 
-**② AI → RTL 변환 (DQN)**
-Google Colab에서 학습한 Deep Q-Network 가중치를 정수 스케일로 변환해 Verilog 상수로 직접 내장한다. 신경망 추론 전체가 클럭 없는 조합 논리 회로로 동작한다.
+**② DQN → RTL 변환 (AI 모드)**
+Google Colab에서 학습한 Deep Q-Network(5→8→3)의 가중치를 정수 스케일로 변환해 Verilog 상수로 직접 내장한다. 별도의 메모리 없이 신경망 추론 전체가 클럭 없는 조합 논리 회로로 동작한다.
 
-**③ 공 궤적 예측 (Predict 모드)**
-현재 공의 속도 벡터를 기반으로 패들 도달 위치를 사전 계산하여 P2 패들을 이동시킨다. 반응 주기(`REACTION_DIV`), 데드존(`DEADZONE`), 오차(`ERROR_RANGE`) 파라미터로 난이도를 조절한다.
+**③ VRAM 없는 실시간 렌더링**
+h_cnt/v_cnt가 모니터 픽셀 위치를 추적하며 매 픽셀마다 조합 논리로 오브젝트 포함 여부를 즉시 판단해 색상을 출력한다. 프레임 버퍼를 사용하지 않아 BRAM 자원을 절약한다.
 
-### 트러블슈팅
+---
 
-| 발생 문제 | 발생 원인 | 해결 방안 | 결과 |
-|-----------|-----------|-----------|------|
-| Predict 모드 패들이 너무 정확해 게임이 성립되지 않음 | 예측 오차 없이 항상 최적 위치 이동 | `ERROR_RANGE` 파라미터로 의도적 오차 주입 | 난이도 조절 가능한 자연스러운 대전 구현 |
-| 공 속도 증가 시 패들 반응이 뒤처짐 | `REACTION_DIV` 고정값으로 반응 주기 부족 | 속도 단계별 반응 주기 동적 조정 | 고속 구간에서도 안정적 추적 |
+## 5. 트러블슈팅 (Troubleshooting)
+
+| 발생 문제 | 원인 | 해결 방안 | 결과 |
+|-----------|------|-----------|------|
+| Predict 모드 패들이 너무 정확해 게임 성립 불가 | 예측 오차 없이 항상 최적 위치로 이동 | `ERROR_RANGE` 파라미터로 의도적 오차 주입 | 난이도 조절 가능한 자연스러운 대전 구현 |
+| 공 고속 구간에서 패들 반응 뒤처짐 | `REACTION_DIV` 고정값으로 반응 주기 부족 | 속도 단계별 반응 주기 동적 조정 | 고속 구간에서도 안정적 추적 |
 
 ---
 
